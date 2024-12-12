@@ -1,0 +1,30 @@
+# Configuration de la VM : Guide des paramètres
+
+- **Availability Options** : No infrastructure redundancy required
+- **Security Type** : Standard
+- **Image** : Ubuntu Server 22.04 LTS
+- **Size** : B2ats_v2
+- **SSH Public Key** : Téléchargement lors de la création de la clé publique SSH sur la machine locale
+- **Authentication Type** : SSH public key
+- **Username** : *sensitive*
+- **Public Inbound Ports** : Allow selected ports
+- **Select Inbound Ports** : SSH 22 (HTTP (80) et/ou HTTPS (443) si on prévoit de faire tourner un service HTTP/HTTPS, exemple: pour exposer Stockfish via un serveur web)
+- **OS Disk Size** : 30-64 Go
+- **OS Disk Type** : Premium SSD
+- **Key Management** : Platform-managed keys
+- **Data Disks** : *vide*
+- **Virtual Network** : *Par défaut*
+- **Subnet** : *Par défaut*
+- **Public IP** : Enabled
+- **NIC Network Security Group** : Basic et configurer les règles de sécurité pour autoriser SSH et les ports nécessaires
+- **Enable Accelerated Networking** : Disabled
+- **Load Balancing Options** : None
+- **Enable System Assigned Managed Identity** : No
+- **Login with Microsoft Entra ID** : No
+- **Auto-shutdown** : Configure l’arrêt automatique si nécessaire, en dehors des heures d’utilisation, pour économiser des crédits
+- **Backup** : *désactiver*
+- **Patch Orchestration Options** : Automatic by platform
+- **Monitoring** : *désactiver*
+- **Advanced** : *Par défaut*
+- **Tags** : *facultatif*
+- **Reboot Setting** : Manual
