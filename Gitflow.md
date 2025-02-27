@@ -7,7 +7,7 @@
 
 ## Branches de Support
 
-- **feature/** : Utilisées pour le développement de nouvelles fonctionnalités. Chaque fonctionnalité a sa propre branche, par exemple `feature/ajout-authentification`.
+- **feat/** : Utilisées pour le développement de nouvelles fonctionnalités. Chaque fonctionnalité a sa propre branche, par exemple `feat/ajout-authentification`.
 - **fix/** : Utilisées pour corriger des bugs non critiques identifiés en phase de développement. Chaque correction a sa propre branche, par exemple `fix/correction-bug-login`. Ces branches sont créées à partir de `develop` et fusionnées dans `develop` une fois la correction terminée.
 - **hotfix/** : Utilisées pour les corrections urgentes sur la branche `main`. Elles permettent de résoudre rapidement des problèmes critiques en production. Les branches `hotfix/` sont créées à partir de `main` et, une fois la correction apportée, sont fusionnées dans `main` et `develop` pour assurer la synchronisation des correctifs.
 
@@ -16,9 +16,9 @@
 ## Workflow
 
 1. **Développement de Fonctionnalités** :
-   - Créez une branche `feature/` à partir de `develop`.
+   - Créez une branche `feat/` à partir de `develop`.
    - Développez la fonctionnalité et testez-la.
-   - Fusionnez la branche `feature/` dans `develop` une fois terminée.
+   - Fusionnez la branche `feat/` dans `develop` une fois terminée.
 
 2. **Correction de Bugs** :
    - Créez une branche `fix/` à partir de `develop`.
@@ -53,7 +53,7 @@ Après installation, initialisez `git-flow` dans votre dépôt :
 git flow init
 ```
 
-Cette commande configure les branches par défaut (`main` et `develop`) et définit les préfixes pour les branches de support (`feature/`, `release/`, `hotfix/`).
+Cette commande configure les branches par défaut (`main` et `develop`) et définit les préfixes pour les branches de support (`feat/`, `release/`, `hotfix/`).
 
 ## Bonnes Pratiques
 
@@ -65,7 +65,7 @@ Cette commande configure les branches par défaut (`main` et `develop`) et défi
 
 - **Convention de Nommage des Branches**:
     Adoptez une convention claire pour le nommage des branches, par exemple :
-    - Fonctionnalités : `feature/nom-fonctionnalité`
+    - Fonctionnalités : `feat/nom-fonctionnalité`
     - Corrections : `fix/description-correction`
     - Releases : `release/x.y.z` (où `x.y.z` représente le numéro de version)
     - Hotfixes : `hotfix/description-correction`
