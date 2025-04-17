@@ -3,8 +3,8 @@ module "organization" {
   project_names = ["production", "mock"]
 
   # iam_groups = {
-  #   "Keltio Administrators" = {
-  #     description = "Admin group for Keltio Energy"
+  #   "CastledChess Administrators" = {
+  #     description = "Admin group for CastledChess"
   #     policies = [
   #       {
   #         permission_set = "OrganizationManager"
@@ -16,7 +16,7 @@ module "organization" {
   #       }
   #     ]
   #   }
-  #   "Keltio Billing" = {
+  #   "CastledChess Billing" = {
   #     policies = [
   #       {
   #         permission_set = "BillingManager"
@@ -24,7 +24,7 @@ module "organization" {
   #       }
   #     ]
   #   },
-  #   "Keltio Developers" = {
+  #   "CastledChess Developers" = {
   #     policies = [
   #       {
   #         permission_set = "AllProductsReadOnly"
@@ -34,7 +34,8 @@ module "organization" {
   #   }
   # }
 
-  # iam_users = {
-  #   "victor@keltio.fr" = ["Keltio Administrators", "Keltio Billing"]
-  # }
+#   iam_users = {
+#     "oualid.zejli@epitech.eu"       = ["CastledChess Administrators", "CastledChess Billing"],
+#     "idriss.nait-chalal@epitech.eu" = ["CastledChess Administrators", "CastledChess Billing"]
+#   }
 }

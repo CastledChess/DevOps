@@ -1,6 +1,6 @@
 terraform {
   backend "s3" {
-    bucket = "keltio-org-tfstate-bucket"
+    bucket = "castledchess-org-tfstate-bucket"
     key    = "1_projects.tfstate"
     region = "fr-par"
     endpoints = {
