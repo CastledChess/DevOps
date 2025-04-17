@@ -7,8 +7,8 @@ variable "email_contacts" {
   type        = list(string)
   description = "Email contacts to alert in case of error"
   default = [
-    "victor@keltio.fr",
-    "kevin@keltio.fr",
+    "oualid.zejli@epitech.eu",
+    "idriss.nait-chalal@epitech.eu",
   ]
 }
 
