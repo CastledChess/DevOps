@@ -1,7 +1,7 @@
 terraform {
   backend "s3" {
     bucket = "castledchess-prod-tfstate"
-    key    = "3_monitoring.tfstate"
+    key    = "5_ops.tfstate"
     region = "fr-par"
     endpoints = {
       s3 = "https://s3.fr-par.scw.cloud"
