@@ -1,9 +1,22 @@
-.credentials
+!.gitkeep
 
-.terraform
-.terraform.*
-terraform.tfvars
-terraform.tfstate
-terraform.tfstate.*
+.credentials
+.credentials.*
+!.credentials/context.example
+
+.kubeconfig
+.kubeconfig.*
+!.kubeconfig/.gitkeep
+kubeconfig
+kubeconfig*
+.terraform*
+terraform.tfstate*
+
+.venv
+__pycache__
+environments/*/3_apps/*/package
 
 .DS_Store
+.vscode
+
+*.pem
