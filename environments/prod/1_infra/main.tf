@@ -10,7 +10,7 @@ module "infra" {
     "castledchess-outreach" = {
       name          = "castledchess-outreach"
       node_type     = "db-dev-s"
-      engine        = "MySQL-8"
+      engine        = "PostgreSQL-15"
       is_ha_cluster = false
 
       db_names                  = ["kollectif_devsecops", "test_kollectif_devsecops"]
