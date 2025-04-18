@@ -1,0 +1,7 @@
+stores:
+  scw:
+    type: scaleway
+
+secrets:
+  - secret: cloudflare-api-token
+    store: scw
