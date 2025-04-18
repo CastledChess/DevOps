@@ -1,0 +1,63 @@
+name: Terraform Drift Detection
+
+on:
+  workflow_call:
+    inputs:
+      target:
+        required: true
+        type: string
+
+env:
+  TERRAFORM_LAYERS: |
+    environments/prod/0_tfstate
+    environments/prod/1_infra
+    environments/prod/2_k8s_services
+    environments/prod/3_monitoring
+    environments/prod/4_apps
+    environments/prod/4_apps/gitlab_runner
+    environments/prod/4_apps/intent_manager
+    environments/prod/4_apps/charts
+    environments/prod/4_apps/kollectif_devsecops
+    environments/prod/4_apps/blog_newsletter_manager
+    environments/prod/4_apps/aws_nuke
+    environments/prod/4_apps/consolidator
+    environments/prod/4_apps/vaultwarden
+    environments/prod/4_apps/hubspot_manager
+    environments/prod/5_ops
+
+jobs:
+  check-drift:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.9.5
+
+      - name: Check Drift
+        id: drift
+        run: |
+          drifted_layers=""
+          for dir in $TERRAFORM_LAYERS; do
+            if [ -d "$dir" ]; then
+              echo ">>> Running Terraform drift in $dir"
+              terraform init -chdir="$dir"
+              if ! terraform plan -detailed-exitcode -chdir="$dir"; then
+                drifted_layers="$drifted_layers $dir"
+              fi
+            else
+              echo "Directory $dir does not exist"
+              exit 1
+            fi
+          done
+          echo "drifted_layers=$drifted_layers" >> $GITHUB_OUTPUT
+
+      - name: Notify Slack
+        if: steps.drift.outputs.drifted_layers != ''
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        run: |
+          message=":warning: Some Terraform layers drifted: \`$(echo ${{ steps.drift.outputs.drifted_layers }} | sed 's/ /` `/g')\`"
+          curl -X POST -H 'Content-type: application/json' --data "{\"text\":\"$message\"}" $SLACK_WEBHOOK_URL

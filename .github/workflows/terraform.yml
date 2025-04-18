@@ -1,0 +1,109 @@
+name: Terraform Operations
+
+on:
+  workflow_call:
+    inputs:
+      target:
+        required: true
+        type: string
+
+env:
+  TERRAFORM_LAYERS: |
+    environments/prod/0_tfstate
+    environments/prod/1_infra
+    environments/prod/2_k8s_services
+    environments/prod/3_monitoring
+    environments/prod/4_apps
+    environments/prod/5_ops
+
+jobs:
+  terraform-checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.9.5
+
+      - name: Terraform Format
+        run: |
+          for dir in $TERRAFORM_LAYERS; do
+            if [ -d "$dir" ]; then
+              echo ">>> Checking formatting in $dir"
+              terraform fmt -check -recursive -write=false -diff -chdir="$dir"
+            else
+              echo "Directory $dir does not exist"
+              exit 1
+            fi
+          done
+
+      - name: Terraform Validate
+        run: |
+          for dir in $TERRAFORM_LAYERS; do
+            if [ -d "$dir" ]; then
+              echo ">>> Validating $dir"
+              terraform init -backend=false -chdir="$dir"
+              terraform validate -chdir="$dir"
+            else
+              echo "Directory $dir does not exist"
+              exit 1
+            fi
+          done
+
+      - name: Install tfsec
+        run: |
+          curl -s https://raw.githubusercontent.com/aquasecurity/tfsec/master/scripts/install_linux.sh | bash
+
+      - name: Run tfsec
+        run: |
+          for dir in $TERRAFORM_LAYERS; do
+            if [ -d "$dir" ]; then
+              echo ">>> Running tfsec in $dir"
+              tfsec "$dir"
+            else
+              echo "Directory $dir does not exist"
+              exit 1
+            fi
+          done
+
+      - name: Install Infracost
+        run: |
+          curl -fsSL https://raw.githubusercontent.com/infracost/infracost/master/scripts/install.sh | sh
+
+      - name: Run Infracost
+        run: |
+          for dir in $TERRAFORM_LAYERS; do
+            if [ -d "$dir" ]; then
+              echo ">>> Estimating costs in $dir"
+              infracost breakdown --path "$dir" --format table
+            else
+              echo "Directory $dir does not exist"
+              exit 1
+            fi
+          done
+
+  terraform-plan:
+    needs: terraform-checks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.9.5
+
+      - name: Terraform Plan
+        run: |
+          for dir in $TERRAFORM_LAYERS; do
+            if [ -d "$dir" ]; then
+              echo ">>> Running Terraform Plan in $dir"
+              terraform init -chdir="$dir"
+              terraform plan -chdir="$dir"
+            else
+              echo "Directory $dir does not exist"
+              exit 1
+            fi
+          done

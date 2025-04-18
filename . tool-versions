@@ -1,0 +1,9 @@
+direnv 2.34.0
+terraform 1.9.5
+kubectl 1.30.3
+helm 3.15.4
+jq 1.6
+tflint 0.53.0
+just 1.35.0
+scaleway-cli 2.32.1
+pre-commit 3.8.0

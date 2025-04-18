@@ -2,6 +2,7 @@
 
 .credentials
 .credentials.*
+!.credentials/CORP.ENV.tpl
 !.credentials/context.example
 
 .kubeconfig
