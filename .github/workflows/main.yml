@@ -1,0 +1,83 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  schedule:
+    - cron: '0 0 * * *'  # Exécution quotidienne à minuit
+  workflow_dispatch:
+    inputs:
+      target:
+        description: 'Target workflow to run'
+        required: true
+        type: choice
+        options:
+          - renovate
+          - drift
+          - terraform
+
+env:
+  TARGET: ${{ github.event.inputs.target || '' }}
+
+jobs:
+  prerequisites:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check Environment Variables
+        run: |
+          required_vars=(
+            "SCW_DEFAULT_PROJECT_ID"
+            "SCW_ACCESS_KEY"
+            "SCW_SECRET_KEY"
+            "SCW_DEFAULT_ORGANIZATION_ID"
+            "SCW_DEFAULT_REGION"
+            "SCW_DEFAULT_ZONE"
+            "AWS_ACCESS_KEY_ID"
+            "AWS_SECRET_ACCESS_KEY"
+            "AWS_DEFAULT_REGION"
+            "GRAFANA_AUTH"
+            "GRAFANA_URL"
+          )
+          for var in "${required_vars[@]}"; do
+            if [ -z "${!var}" ]; then
+              echo "Error: $var is not set"
+              exit 1
+            else
+              echo "$var is set"
+            fi
+          done
+
+  terraform:
+    needs: prerequisites
+    if: ${{ github.event.inputs.target == 'terraform' || github.event_name == 'pull_request' }}
+    uses: ./.github/workflows/terraform.yml
+    with:
+      target: ${{ github.event.inputs.target }}
+    secrets: inherit
+
+  drift:
+    needs: prerequisites
+    if: ${{ github.event.inputs.target == 'drift' || github.event_name == 'schedule' }}
+    uses: ./.github/workflows/drift.yml
+    with:
+      target: ${{ github.event.inputs.target }}
+    secrets: inherit
+
+  renovate:
+    needs: prerequisites
+    if: ${{ github.event.inputs.target == 'renovate' || github.event_name == 'schedule' }}
+    uses: ./.github/workflows/renovate.yml
+    with:
+      target: ${{ github.event.inputs.target }}
+    secrets: inherit
+
+  cleanup:
+    needs: [prerequisites, terraform, drift, renovate]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Cleanup Docker
+        run: docker system prune -af
